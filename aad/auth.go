@@ -19,7 +19,11 @@ func Auth(tenantId string, appId string, clientSecret string) string {
 	data.Set("client_secret", clientSecret)
 
 	client := &http.Client{}
-	req, _ := http.NewRequest("POST", aadUrl, bytes.NewBufferString(data.Encode()))
+	req, err := http.NewRequest("POST", aadUrl, bytes.NewBufferString(data.Encode()))
+	if err != nil {
+		panic(err)
+	}
+
 	req.Header.Add("Content-Type", "application/x-www-form-urlencoded")
 
 	resp, err := client.Do(req)
