@@ -21,19 +21,21 @@ func main() {
 
 	token := aad.Auth(
 		cfgMap["audience"],
-		cfgMap["tenantId"],
-		cfgMap["appId"],
-		cfgMap["clientSecret"])
+		cfgMap["tenant-id"],
+		cfgMap["app-id"],
+		cfgMap["client-secret"])
 
-	armer := arm.Arm{
+	a := arm.Arm{
 		cfgMap["api-version"],
 	cfgMap["audience"],
-	cfgMap["subscriptionId"],
+	cfgMap["subscription-id"],
 		token}
 
-	// XXX mental node to add timeouts to all http clients
+	// XXX mental note to add timeouts to all http clients
 
-	exists := armer.ResGrpExists("quilt")
+	exists := a.ResGrpExists(cfgMap["resource-group"])
 	fmt.Println("Resource group 'quilt' exists: ", exists)
 
+	res := a.List(cfgMap["resource-group"])
+	fmt.Println(res)
 }
