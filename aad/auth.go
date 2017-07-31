@@ -9,12 +9,12 @@ import (
 	"encoding/json"
 )
 
-func Auth(tenantId string, appId string, clientSecret string) string {
+func Auth(audience string, tenantId string, appId string, clientSecret string) string {
 	aadUrl := fmt.Sprintf("https://login.microsoftonline.com/%s/oauth2/token?api-version=1.0", tenantId)
 
 	data := url.Values{}
 	data.Set("grant_type","client_credentials")
-	data.Set("resource","https://management.core.windows.net")
+	data.Set("resource", audience)
 	data.Set("client_id", appId)
 	data.Set("client_secret", clientSecret)
 
@@ -38,7 +38,7 @@ func Auth(tenantId string, appId string, clientSecret string) string {
 		if err := json.Unmarshal(bodyBytes, &tokenMap); err != nil {
 			panic(err)
 		}
-		return tokenMap["access_token"]
+		return "Bearer " + tokenMap["access_token"]
 	}
 
 	panic(fmt.Sprintf("AAD Authentication failed: %d", resp.StatusCode))
