@@ -8,10 +8,10 @@ import (
 	"../util"
 )
 
-func HasType(arr []interface{}, t string) bool {
+func GetType(arr []interface{}, t string) map[string]interface{} {
 	return util.Find(arr, func(e interface{}) bool {
 		return e.(map[string]interface{})["type"] == t
-	}) != nil
+	}).(map[string]interface{})
 }
 
 func (ctx *Arm) List(name string) []interface{} {

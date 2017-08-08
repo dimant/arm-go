@@ -39,6 +39,11 @@ func main() {
 	res := a.List(cfgMap["resource-group"])
 	// fmt.Println(res)
 
-	fmt.Println("Resource group has virtual network: ", arm.HasType(res,"Microsoft.Network/virtualNetworks"))
-	fmt.Println("Resource group has storage account: ", arm.HasType(res,"Microsoft.Storage/storageAccounts"))
+	vnet := arm.GetType(res,"Microsoft.Network/virtualNetworks")
+	fmt.Println("Resource group has virtual network: ", vnet != nil)
+
+	storage := arm.GetType(res,"Microsoft.Storage/storageAccounts")
+	fmt.Println("Resource group has storage account: ", storage != nil)
+
+
 }
