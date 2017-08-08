@@ -34,11 +34,11 @@ func main() {
 	// XXX mental note to add timeouts to all http clients
 
 	exists := a.ResGrpExists(cfgMap["resource-group"])
-	fmt.Println("Resource group 'quilt' exists: ", exists)
+	fmt.Println("Resource group exists: ", exists)
 
 	res := a.List(cfgMap["resource-group"])
-	fmt.Println(res)
+	// fmt.Println(res)
 
-	fmt.Println(arm.HasType(res,"Microsoft.Network/virtualNetworks"))
-	fmt.Println(arm.HasType(res,"Microsoft.Storage/storageAccounts"))
+	fmt.Println("Resource group has virtual network: ", arm.HasType(res,"Microsoft.Network/virtualNetworks"))
+	fmt.Println("Resource group has storage account: ", arm.HasType(res,"Microsoft.Storage/storageAccounts"))
 }
