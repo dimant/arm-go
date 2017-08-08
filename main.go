@@ -33,17 +33,29 @@ func main() {
 
 	// XXX mental note to add timeouts to all http clients
 
-	exists := a.ResGrpExists(cfgMap["resource-group"])
+	err, exists := a.ResGrpExists(cfgMap["resource-group"])
+	if err != nil {
+		panic(err)
+	}
 	fmt.Println("Resource group exists: ", exists)
 
-	res := a.List(cfgMap["resource-group"])
-	// fmt.Println(res)
+	err, res := a.List(cfgMap["resource-group"])
+	if err != nil {
+		panic(err)
+	}
 
-	vnet := arm.GetType(res,"Microsoft.Network/virtualNetworks")
-	fmt.Println("Resource group has virtual network: ", vnet != nil)
+	vnetType := "Microsoft.Network/virtualNetworks"
+	err, vnet := arm.Find(res, "type", vnetType)
+	if err != nil {
+		panic(fmt.Errorf("Couldn't find type: %s", vnetType))
+	}
 
-	storage := arm.GetType(res,"Microsoft.Storage/storageAccounts")
-	fmt.Println("Resource group has storage account: ", storage != nil)
+	storageType := "Microsoft.Storage/storageAccounts"
+	err, storage := arm.Find(res, "type", storageType)
+	if err != nil {
+		panic(fmt.Errorf("Couldn't find type: %s", storageType))
+	}
 
-
+	fmt.Println(vnet.Id)
+	fmt.Println(storage.Id)
 }

@@ -8,13 +8,20 @@ import (
 	"../util"
 )
 
-func GetType(arr []interface{}, t string) map[string]interface{} {
-	return util.Find(arr, func(e interface{}) bool {
-		return e.(map[string]interface{})["type"] == t
+func Find(arr []interface{}, k string, v string) (error, *Resource) {
+	res := Resource{}
+	mapRes := util.Find(arr, func(e interface{}) bool {
+		return e.(map[string]interface{})[k] == v
 	}).(map[string]interface{})
+
+	if err := res.FillStruct(mapRes); err != nil {
+		return err, nil
+	} else {
+		return nil, &res
+	}
 }
 
-func (ctx *Arm) List(name string) []interface{} {
+func (ctx *Arm) List(name string) (error, []interface{}) {
 	url := fmt.Sprintf("%ssubscriptions/%s/resourcegroups/%s/resources?api-version=%s",
 		ctx.Audience,
 		ctx.SubscriptionId,
@@ -26,7 +33,7 @@ func (ctx *Arm) List(name string) []interface{} {
 
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
-		panic(err)
+		return err, nil
 	}
 
 	req.Header.Set("Authorization", ctx.AuthToken)
@@ -54,13 +61,13 @@ func (ctx *Arm) List(name string) []interface{} {
 
 		l := a["value"].([]interface{})
 
-		return l
+		return nil, l
 	} else {
-		panic(resp.StatusCode)
+		return fmt.Errorf("Response: %s",resp.StatusCode), nil
 	}
 }
 
-func (ctx *Arm) ResGrpExists(name string) bool {
+func (ctx *Arm) ResGrpExists(name string) (error, bool) {
 	url := fmt.Sprintf("%ssubscriptions/%s/resourcegroups/%s?api-version=%s",
 		ctx.Audience,
 		ctx.SubscriptionId,
@@ -71,7 +78,7 @@ func (ctx *Arm) ResGrpExists(name string) bool {
 
 	req, err := http.NewRequest("HEAD", url, nil)
 	if err != nil {
-		panic(err)
+		return err, false
 	}
 
 	req.Header.Set("Authorization", ctx.AuthToken)
@@ -84,9 +91,9 @@ func (ctx *Arm) ResGrpExists(name string) bool {
 	defer resp.Body.Close()
 
 	if resp.StatusCode == 204 {
-		return true
+		return nil, true
 	} else if resp.StatusCode == 404 {
-		return false
+		return nil, false
 	} else {
 		panic(resp.Status)
 	}
