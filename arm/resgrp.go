@@ -5,7 +5,14 @@ import (
 	"net/http"
 	"io/ioutil"
 	"encoding/json"
+	"../util"
 )
+
+func HasType(arr []interface{}, t string) bool {
+	return util.Find(arr, func(e interface{}) bool {
+		return e.(map[string]interface{})["type"] == t
+	}) != nil
+}
 
 func (ctx *Arm) List(name string) []interface{} {
 	url := fmt.Sprintf("%ssubscriptions/%s/resourcegroups/%s/resources?api-version=%s",
@@ -31,7 +38,7 @@ func (ctx *Arm) List(name string) []interface{} {
 	}
 	defer resp.Body.Close()
 
-	if(resp.StatusCode == 200) {
+	if resp.StatusCode == 200 {
 		bytes, err := ioutil.ReadAll(resp.Body)
 		if err != nil {
 			panic(err)

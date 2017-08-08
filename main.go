@@ -38,4 +38,7 @@ func main() {
 
 	res := a.List(cfgMap["resource-group"])
 	fmt.Println(res)
+
+	fmt.Println(arm.HasType(res,"Microsoft.Network/virtualNetworks"))
+	fmt.Println(arm.HasType(res,"Microsoft.Storage/storageAccounts"))
 }
